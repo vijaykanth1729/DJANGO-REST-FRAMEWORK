@@ -104,3 +104,12 @@ class MovieRetrieveUpdateDestroyView(mixins.RetrieveModelMixin,
         return self.update(request, *args, **kwargs)
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+class MovieList(generics.ListCreateAPIView):
+    # these are the very simplest forms of writing views..
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
+
+class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
