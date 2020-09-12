@@ -3,10 +3,10 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import authenticate
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
-        fields = ('name','quantity','available','description')
+        fields = ('url','name','quantity','available','description')
 
 class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
