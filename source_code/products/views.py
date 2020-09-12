@@ -6,6 +6,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import viewsets
+from rest_framework.authentication import (
+                        BasicAuthentication,
+                        SessionAuthentication,
+                        TokenAuthentication
+                        )
+from rest_framework.permissions import IsAuthenticated
 from .serializers import ProductSerializer, AnimalSerializer, MovieSerializer
 from .models import Product, Animal, Movie
 
@@ -80,7 +87,7 @@ class AnimalDetailApiView(APIView):
         animal.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class MovieListCreateView(mixins.ListModelMixin,
+class MovieListView(mixins.ListModelMixin,
                           mixins.CreateModelMixin,
                           generics.GenericAPIView):
     queryset = Movie.objects.all()
@@ -89,9 +96,9 @@ class MovieListCreateView(mixins.ListModelMixin,
     def get(self, request, *args, **kwargs):
         return self.list(request, *args,**kwargs)
     def post(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
+        return self.create(request, *args, **kwargs)
 
-class MovieRetrieveUpdateDestroyView(mixins.RetrieveModelMixin,
+class MovieDetailView(mixins.RetrieveModelMixin,
                                     mixins.UpdateModelMixin,
                                     mixins.DestroyModelMixin,
                                     generics.GenericAPIView):
@@ -100,8 +107,10 @@ class MovieRetrieveUpdateDestroyView(mixins.RetrieveModelMixin,
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
@@ -113,3 +122,25 @@ class MovieList(generics.ListCreateAPIView):
 class MovieDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+
+
+
+class MovieViewSet(viewsets.ModelViewSet):
+    # THis will generate urls automatically using Routers..
+    queryset = Movie.objects.all()
+    serializer_class = MovieSerializer
+    # it finds all auths in list, if any one matches it gives data..
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+class ProductViewSet(viewsets.ModelViewSet):
+    # THis will generate urls automatically using Routers..
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+class AnimalViewSet(viewsets.ModelViewSet):
+    # THis will generate urls automatically using Routers..
+    queryset = Animal.objects.all()
+    serializer_class = AnimalSerializer
+    authentication_classes = [TokenAuthentication,SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
