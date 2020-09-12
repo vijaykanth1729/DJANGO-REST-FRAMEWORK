@@ -1,6 +1,6 @@
 from rest_framework.urlpatterns import format_suffix_patterns
 from django.urls import path,include
-from .views import products_list
+from .views import products_list, LoginView, LogoutView
 from .views import (product_detail,
                     AnimalApiView,
                     AnimalDetailApiView,
@@ -12,6 +12,8 @@ from .views import (product_detail,
 app_name = 'products'
 
 urlpatterns = [
+    path('login/', LoginView.as_view()),
+    path('logout/', LogoutView.as_view()),
     # path('products/', products_list),
     # path('products/<int:pk>/', product_detail),
     # path('animals/', AnimalApiView.as_view()),

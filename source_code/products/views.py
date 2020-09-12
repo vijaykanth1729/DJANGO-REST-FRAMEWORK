@@ -13,7 +13,12 @@ from rest_framework.authentication import (
                         TokenAuthentication
                         )
 from rest_framework.permissions import IsAuthenticated
-from .serializers import ProductSerializer, AnimalSerializer, MovieSerializer
+from .serializers import (
+                        ProductSerializer,
+                        AnimalSerializer,
+                        MovieSerializer,
+                        UserLoginSerializer
+                        )
 from .models import Product, Animal, Movie
 
 @api_view(['GET', 'POST'])
@@ -144,3 +149,23 @@ class AnimalViewSet(viewsets.ModelViewSet):
     serializer_class = AnimalSerializer
     authentication_classes = [TokenAuthentication,SessionAuthentication,BasicAuthentication]
     permission_classes = [IsAuthenticated]
+
+
+
+from django.contrib.auth import login as django_login, logout as django_logout
+from rest_framework.authtoken.models import Token
+class LoginView(APIView):
+    # Implementing to retrive token, instead we can use djangp-rest-auth library.
+    def post(self,request):
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        django_login(request,user)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'Token':token.key},status=200)
+
+class LogoutView(APIView):
+    authentication_classes = [TokenAuthentication]
+    def post(self, request):
+        django_logout(request)
+        return Response(status=204)
