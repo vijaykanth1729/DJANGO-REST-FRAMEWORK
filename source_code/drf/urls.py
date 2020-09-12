@@ -28,4 +28,6 @@ urlpatterns = [
     path('', include('blog.urls')),
     path('', include('products.urls')),
     path('', include(router.urls)),
+    path('rest-auth/', include('rest_auth.urls')),
+    path('register/', include('rest_auth.registration.urls'))
 ]
